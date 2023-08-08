@@ -398,6 +398,18 @@ module.exports = {
         style: 'bar',
         legendNonzeroOnly: true
     },
+    'CCE with temp alarms by facility_level':{
+        type: 'refrigerator',
+        groupBy: 'facility_level',
+        colorBy: 'alarm_counts',
+        style: 'bar',
+        legendNonzeroOnly: true,
+        
+
+        
+    
+
+    },
     'Facility type by CCE model': {
         type: 'refrigerator',
         groupBy: 'model_id',

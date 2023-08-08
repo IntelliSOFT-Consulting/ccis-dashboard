@@ -424,5 +424,27 @@ module.exports = [
             foreignColumn: 'id_refrigerators'
         }
     },
+    {name: 'RefrigeratorsWithTempAlarms30',
+    query: `
+    SELECT
+    hf.facility_level,
+    COALESCE(COUNT(DISTINCT rt.refrigerator_id), 0) AS alarm_counts
+FROM
+    health_facilities2_odkx hf
+LEFT JOIN
+    refrigerators_odkx rd ON hf.id_health_facilities = rd.facility_row_id
+LEFT JOIN
+    refrigerator_temperature_data_odkx rt ON rt.refrigerator_id = rd.id_refrigerators
+        AND (rt.number_of_high_alarms_30 IS NOT NULL OR rt.number_of_low_alarms_30 IS NOT NULL)
+GROUP BY
+    hf.facility_level
+        `,
+        provides: ['alarm_counts'],
+        joinOn: {
+            table: 'health_facilities2_odkx',
+            localColumn: 'alarm_counts',
+            foreignColumn: 'facility_level'
+        }
+    }
     
 ];

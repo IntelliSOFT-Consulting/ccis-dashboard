@@ -98,6 +98,7 @@ module.exports = {
             'CCE facility power availability by model',
             'CCE model by facility type',
             'CCE type by facility type',
+            'CCE with temp alarms by facility_level',
             'Facility type by CCE model',
             'All CCE list'
         ],
