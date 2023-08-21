@@ -398,18 +398,14 @@ module.exports = {
         style: 'bar',
         legendNonzeroOnly: true
     },
-    'CCE with temp alarms by facility_level':{
-        type: 'refrigerator',
-        groupBy: 'facility_level',
-        colorBy: 'alarm_counts',
-        style: 'bar',
-        legendNonzeroOnly: true,
-        
-
-        
     
-
-    },
+        'CCE with temp alarms by facility_level': {
+            type: 'refrigerator',
+            groupBy: 'facility_level',
+            colorBy: 'num_refrigerators_with_temp_alarms_30',
+            style: 'bar'
+        },
+    
     'Facility type by CCE model': {
         type: 'refrigerator',
         groupBy: 'model_id',
@@ -794,5 +790,20 @@ module.exports = {
             'regionlevel3',
             'type_of_repair'
         ]
+    },
+    'top_5_most_common_repairs':{
+        
+        type: 'refrigerator',
+        style: 'list',
+        columns: [
+            'repair_type',
+            'repair_count'
+        ]
+    },
+    'top_5_most_common_spare_parts_consumed':{
+        type: 'refrigerator',
+        style:'pie',
+        groupBy:'spare_part_name',
+        colorBy:'occurrence_count'
     }
 };

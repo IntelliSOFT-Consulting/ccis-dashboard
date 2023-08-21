@@ -21,7 +21,7 @@ module.exports = {
             'Low alarms by facility level',
             'CCE by working status',
             'CCE utilization (bar)',
-            'Repairs and spare parts',
+            
             'Age by manufacturer',
             'Recent alarms map',
             'Update status by facility'
@@ -100,7 +100,10 @@ module.exports = {
             'CCE type by facility type',
             'CCE with temp alarms by facility_level',
             'Facility type by CCE model',
-            'All CCE list'
+            'All CCE list',
+            'top_5_most_common_repairs',
+            'top_5_most_common_spare_parts_consumed'
+
         ],
         defaultViz: 'Working status by CCE manufacturer',
         enabledFilters: [
