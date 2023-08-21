@@ -453,25 +453,25 @@ module.exports = [
     
     {
         name: 'top_5_common_repairs',
-        query: `SELECT
-        WITH ranked_repair_types AS (
+        query: `WITH ranked_repair_types AS (
             SELECT
                 TRIM(BOTH '"' FROM repair_type) AS repair_type,
-                COUNT(*) AS repair_count, 
+                COUNT(*) AS repair_count,
                 RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
-            
             FROM (
                 SELECT
                     UNNEST(string_to_array(REPLACE(REPLACE(type_of_repair, '["', ''), '"]', ''), '","')) AS repair_type
                 FROM maintenance_logs_odkx
             ) AS extracted_repairs
-            GROUP BY repair_type 
-            )
-            SELECT
-                repair_type,
-                repair_count
-            FROM ranked_repair_types
-            WHERE rank <= 5;
+            GROUP BY repair_type
+        )
+        SELECT
+            repair_type,
+            repair_count
+        FROM ranked_repair_types
+        WHERE rank <= 5
+        ORDER BY repair_count DESC;
+        
         `,
         provides: ['repair_type','repair_count'], 
         
