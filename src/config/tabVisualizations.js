@@ -103,6 +103,7 @@ module.exports = {
             'All CCE list',
             'top_5_most_common_repairs',
             'top_5_most_common_spare_parts_consumed'
+            
 
         ],
         defaultViz: 'Working status by CCE manufacturer',

@@ -796,15 +796,13 @@ module.exports = {
         type: 'refrigerator',
         style: 'pie',
         groupBy:'repair_type',
-        colorBy:'repair_count'
-            
-            
+        colourBy:'repair_count'
         
     },
     'top_5_most_common_spare_parts_consumed':{
         type: 'refrigerator',
         style:'pie',
-        groupBy:'spare_part_name',
-        colorBy:'occurrence_count'
+        groupBy:'repair_type',
+        colourBy:'repair_count'
     }
 };

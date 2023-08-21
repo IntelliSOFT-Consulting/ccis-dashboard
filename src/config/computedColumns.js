@@ -470,7 +470,7 @@ module.exports = [
             repair_count
         FROM ranked_repair_types
         WHERE rank <= 5
-        ORDER BY repair_count DESC;
+        ORDER BY repair_count DESC
         
         `,
         provides: ['repair_type','repair_count'], 
@@ -529,10 +529,7 @@ module.exports = [
             foreignColumn: 'id_maintenance_logs'
         }
 
-    }
-            
-        
-        
+    }    
         ];
         
     
