@@ -794,11 +794,12 @@ module.exports = {
     'top_5_most_common_repairs':{
         
         type: 'refrigerator',
-        style: 'list',
-        columns: [
-            'repair_type',
-            'repair_count'
-        ]
+        style: 'pie',
+        groupBy:'repair_type',
+        colorBy:'repair_count'
+            
+            
+        
     },
     'top_5_most_common_spare_parts_consumed':{
         type: 'refrigerator',
