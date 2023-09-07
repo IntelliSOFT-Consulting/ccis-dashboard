@@ -425,111 +425,106 @@ module.exports = [
         }
     },
     {
-        
         name: 'RefrigeratorsWithTempAlarms30',
         query: `
         SELECT
-                hf.facility_level,
-                COALESCE(COUNT(DISTINCT rt.refrigerator_id), 0) AS num_refrigerators_with_temp_alarms_30
-        FROM
-                health_facilities2_odkx hf
-        LEFT JOIN
-                refrigerators_odkx rd ON hf.id_health_facilities = rd.facility_row_id
-        LEFT JOIN
-                refrigerator_temperature_data_odkx rt ON rt.refrigerator_id = rd.id_refrigerators
-                AND (rt.number_of_high_alarms_30 IS NOT NULL OR rt.number_of_low_alarms_30 IS NOT NULL)
-        GROUP BY
-                hf.facility_level
-            `,
-            provides: ['num_refrigerators_with_temp_alarms_30'],
-            joinOn: {
-                table: 'health_facilities2_odkx',
-                localColumn: 'facility_level',
-                foreignColumn: 'facility_level'
-            }
-        },
-      
-      
+        hf.facility_level,
+        COALESCE(COUNT(DISTINCT rt.refrigerator_id), 0) AS num_refrigerators_with_temp_alarms_30
+    FROM
+        health_facilities2_odkx hf
+    LEFT JOIN
+        refrigerators_odkx rd ON hf.id_health_facilities = rd.facility_row_id
+    LEFT JOIN
+        refrigerator_temperature_data_odkx rt ON rt.refrigerator_id = rd.id_refrigerators
+            AND (rt.number_of_high_alarms_30 IS NOT NULL OR rt.number_of_low_alarms_30 IS NOT NULL)
+    GROUP BY
+        hf.facility_level
+    
+        
+        `,
+        provides: ['num_refrigerators_with_temp_alarms_30'],
+        joinOn: {
+            table: 'health_facilities2_odkx',
+            localColumn: 'num_refrigerators_with_temp_alarms_30',
+            foreignColumn: 'facility_level'
+        }
+    },
+    
     
     {
         name: 'top_5_common_repairs',
-        query: `WITH ranked_repair_types AS (
+        query: `
+        WITH ranked_repair_types AS (
             SELECT
                 TRIM(BOTH '"' FROM repair_type) AS repair_type,
-                COUNT(*) AS repair_count,
+                COUNT(*) AS repair_count, 
                 RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+            
             FROM (
                 SELECT
                     UNNEST(string_to_array(REPLACE(REPLACE(type_of_repair, '["', ''), '"]', ''), '","')) AS repair_type
                 FROM maintenance_logs_odkx
             ) AS extracted_repairs
-            GROUP BY repair_type
-        )
-        SELECT
-            repair_type,
-            repair_count
-        FROM ranked_repair_types
-        WHERE rank <= 5
-        ORDER BY repair_count DESC
-        
+            GROUP BY repair_type 
+            )
+            SELECT
+                repair_type,
+                repair_count
+            FROM ranked_repair_types
+            WHERE rank <= 5
         `,
-        provides: ['repair_type','repair_count'], 
-        
+        provides: ['repair_type', 'repair_count'],
         joinOn: {
             table: 'maintenance_logs_odkx',
-            localColumn: 'repair_count',
-            foreignColumn: 'id_maintenance_logs'
+            localColumn: 'repair_type',  
+            foreignColumn: 'type_of_repair'
         }
     },
+    
     {
-        name:'top_5_common_spare_parts_consumed',
-        query:`
-        WITH ranked_spares AS (
+        name: 'top_5_common_spare_parts_consumed',
+        query: `
+            WITH ranked_spares AS (
+                SELECT
+                    TRIM(BOTH '"' FROM spare_part) AS spare_part_name,
+                    COUNT(*) AS occurrence_count,
+                    RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM (
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_electrical, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                    UNION ALL
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_hardware, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                    UNION ALL
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_monitoring, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                    UNION ALL
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_power, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                    UNION ALL
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_refrigeration, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                    UNION ALL
+                    SELECT
+                        UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_solar, '["', ''), '"]', ''), '","')) AS spare_part
+                    FROM maintenance_logs_odkx
+                ) AS all_spares
+                GROUP BY spare_part_name
+            )
             SELECT
-                TRIM(BOTH '"' FROM spare_part) AS spare_part_name,
-                COUNT(*) AS occurrence_count,
-                RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
-            FROM (
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_electrical, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-                UNION ALL
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_hardware, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-                UNION ALL
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_monitoring, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-                UNION ALL
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_power, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-                UNION ALL
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_refrigeration, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-                UNION ALL
-                SELECT
-                    UNNEST(string_to_array(REPLACE(REPLACE(spare_parts_solar, '["', ''), '"]', ''), '","')) AS spare_part
-                FROM maintenance_logs_odkx
-            ) AS all_spares
-            GROUP BY spare_part_name
-        )
-        SELECT
-            spare_part_name,
-            occurrence_count
-        FROM ranked_spares
-        WHERE rank <= 5
+                spare_part_name,
+                occurrence_count
+            FROM ranked_spares
+            WHERE rank <= 5
         `,
-        provides:['spare_part_name','occurrence_count'],
-        joinOn: {
-            table: 'maintenance_logs_odkx',
-            localColumn: 'occurence_count',
-            foreignColumn: 'id_maintenance_logs'
-        }
-
-    }    
+        provides: ['spare_part_name', 'occurrence_count']
+    }
+    
         ];
         
     

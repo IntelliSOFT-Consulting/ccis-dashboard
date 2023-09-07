@@ -398,13 +398,14 @@ module.exports = {
         style: 'bar',
         legendNonzeroOnly: true
     },
-    
-        'CCE with temp alarms by facility_level': {
-            type: 'refrigerator',
-            groupBy: 'facility_level',
-            colorBy: 'num_refrigerators_with_temp_alarms_30',
-            style: 'bar'
-        },
+    'CCEs with_temp_alarms by facility_level': {
+        type: 'refrigerator',
+        style: 'bar',
+        groupBy: 'facility_level',                     
+        colorBy: 'num_refrigerators_with_temp_alarms_30', 
+                                       
+                                          
+    },
     
     'Facility type by CCE model': {
         type: 'refrigerator',
@@ -791,18 +792,18 @@ module.exports = {
             'type_of_repair'
         ]
     },
-    'top_5_most_common_repairs':{
-        
+    'top_5_most_common_repairs': {
         type: 'refrigerator',
         style: 'pie',
-        groupBy:'repair_type',
-        colourBy:'repair_count'
-        
+        groupBy: 'type_of_repair', // Grouping by repair type
+        sum: 'repair_count',   // Summing the occurrences of each repair type
+        //legendOrder: 'descending', // Order the legend in descending order of repair counts
     },
-    'top_5_most_common_spare_parts_consumed':{
+    'top_5_most_common_spare_parts_consumed': {
         type: 'refrigerator',
-        style:'pie',
-        groupBy:'repair_type',
-        colourBy:'repair_count'
+        style: 'pie',
+        groupBy: 'spare_part_name', // Grouping by spare part type
+        sum: 'occurrence_count',   // Summing the occurrences of each spare part type
+        //legendOrder: 'descending',     // Order the legend in descending order of spare part counts
     }
 };
